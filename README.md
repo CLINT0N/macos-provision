@@ -8,6 +8,7 @@ Disables native apache, installs homebrew apache, installs PHP 5.5, 5.6, 7.0, 7.
 
 Retrieves existing configuration files stored on a web server from a directory structure like below:
 
+```
 - provision
 -- MACHINENAME
 --- config
@@ -35,6 +36,7 @@ Retrieves existing configuration files stored on a web server from a directory s
 ------ php.ini
 ------ conf.d
 ------- ext-xdebug.ini
+```
 
 Installs Applications from Mac App Store using mas-cli, these apps are defined in ```appstore``` within ```applications.sh```
 
