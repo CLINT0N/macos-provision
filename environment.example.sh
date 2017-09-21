@@ -31,3 +31,8 @@ php56_dir="/usr/local/etc/php/5.6"
 php70_dir="/usr/local/etc/php/7.0"
 php71_dir="/usr/local/etc/php/7.1"
 php72_dir="/usr/local/etc/php/7.2"
+
+# HELPERS
+function echo_ok { echo '\033[1;32m'"$1"'\033[0m'; }
+function echo_warn { echo '\033[1;33m'"$1"'\033[0m'; }
+function echo_error  { echo '\033[1;31mERROR: '"$1"'\033[0m'; }
