@@ -77,7 +77,6 @@ php71modules=(
 php72modules=(
 	php72-apcu
 	php72-intl
-	php72-mcrypt
 	php72-opcache
 	php72-xdebug
 	php72-yaml
@@ -211,7 +210,7 @@ echo ""
 	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/72/php.ini $PHP72_DIR
 	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/72/conf.d/ext-xdebug.ini $PHP72_DIR/conf.d
 	# RESTART APACHE
-	apachectl -k restart
+	sudo apachectl -k restart
 fi 
 
 
@@ -260,3 +259,11 @@ sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SF
 echo ""
 echo_ok "Changing default shell to zsh"
 sudo chsh -s /usr/local/bin/zsh
+echo ""
+echo_ok "Done!"
+echo ""
+echo ""
+echo_warn "################################################################################"
+echo ""
+echo_warn "Note that some of these changes may require a logout/restart to take effect."
+echo ""
