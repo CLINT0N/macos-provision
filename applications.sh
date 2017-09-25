@@ -1,7 +1,7 @@
 #!/bin/sh
 source environment.sh
 
-echo_ok "You may be prompted for sudo password multiple times throughout installation"
+echo_warn "You may be prompted for sudo password multiple times throughout installation"
 # install Homebrew
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
@@ -117,6 +117,7 @@ appstore=(
 	715768417 # Microsoft Remote Desktop
 	408981434 # iMovie
 	405772121 # LittleIpsum
+	1278508951 # Trello
 )
 
 # DISABLE BUILT-IN APACHE
@@ -124,10 +125,12 @@ apachectl stop
 launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist 2>/dev/null
 
 # INSTALL BINARIES
+echo ""
 echo_ok "Installing Binaries"
 brew install ${binaries[@]}
 
 # CONFIGURE APACHE
+echo ""
 echo_ok "Configuring Apache"
 apache_version=$(brew list --versions httpd24 | cut -d' ' -f2-)
 sudo cp -v /usr/local/Cellar/httpd24/$apache_version/homebrew.mxcl.httpd24.plist /Library/LaunchDaemons
@@ -143,77 +146,89 @@ brew unlink php71
 brew unlink php72
 
 # INSTALL PHP 55
+echo ""
 echo_ok "Installing PHP 5.5"
 brew install php55 --with-httpd24
 brew install ${php55modules[@]}
 brew unlink php55
 
 # INSTALL PHP 56
+echo ""
 echo_ok "Installing PHP 5.6"
 brew install php56 --with-httpd24
 brew install ${php56modules[@]}
 brew unlink php56
 
 # INSTALL PHP 70
+echo ""
 echo_ok "Installing PHP 7.0"
 brew install php70 --with-httpd24
 brew install ${php70modules[@]}
 brew unlink php70
 
 # INSTALL PHP 71
+echo ""
 echo_ok "Installing PHP 7.1"
 brew install php71 --with-httpd24
 brew install ${php71modules[@]}
 brew unlink php71
 
 # INSTALL PHP 72
+echo ""
 echo_ok "Installing PHP 7.2"
 brew install php72 --with-httpd24
 brew install ${php72modules[@]}
 
 # INSTALL PHP SWITCHER SCRIPT
+echo ""
 echo_ok "Installing PHP Switcher Script"
 curl -L https://gist.github.com/w00fz/142b6b19750ea6979137b963df959d11/raw > /usr/local/bin/sphp
 sudo chmod +x /usr/local/bin/sphp
 
 # DOWNLOAD APACHE & PHP CONFIGS
-if [ "$get_configs" = true ] ;
+if [ "$GET_CONFIGS" = true ] ;
 then
-	echo_ok "Fetching Apache Configuration from $sftp_host"
-	ssh-keygen -R $sftp_host
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$apache2_config/httpd.conf $apache2_dir
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$apache2_config/extra/httpd-vhosts.conf $apache2_dir/extra
-	echo_ok "Fetching PHP Configurations from $sftp_host"
+echo ""
+	echo_ok "Downloading Apache Configuration from $SFTP_HOST"
+	ssh-keygen -R $SFTP_HOST
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$APACHE2_CONFIG/httpd.conf $APACHE2_DIR
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$APACHE2_CONFIG/extra/httpd-vhosts.conf $APACHE2_DIR/extra
+	echo ""
+	echo_ok "Downloading PHP Configurations from $SFTP_HOST"
 	# PHP 55
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/55/php.ini $php55_dir
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/55/conf.d/ext-xdebug.ini $php55_dir/conf.d
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/55/php.ini $PHP55_DIR
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/55/conf.d/ext-xdebug.ini $PHP55_DIR/conf.d
 	# PHP 56
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/56/php.ini $php56_dir
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/56/conf.d/ext-xdebug.ini $php56_dir/conf.d
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/56/php.ini $PHP56_DIR
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/56/conf.d/ext-xdebug.ini $PHP56_DIR/conf.d
 	# PHP 70
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/70/php.ini $php70_dir
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/70/conf.d/ext-xdebug.ini $php70_dir/conf.d
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/70/php.ini $PHP70_DIR
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/70/conf.d/ext-xdebug.ini $PHP70_DIR/conf.d
 	# PHP 71
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/71/php.ini $php71_dir
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/71/conf.d/ext-xdebug.ini $php71_dir/conf.d
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/71/php.ini $PHP71_DIR
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/71/conf.d/ext-xdebug.ini $PHP71_DIR/conf.d
 	# PHP 72
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/72/php.ini $php72_dir
-	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/72/conf.d/ext-xdebug.ini $php72_dir/conf.d
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/72/php.ini $PHP72_DIR
+	sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$PHP_CONFIG/72/conf.d/ext-xdebug.ini $PHP72_DIR/conf.d
 	# RESTART APACHE
 	apachectl -k restart
-fi
+fi 
 
 
 # INSTALL APPS
+echo ""
 echo_ok "Installing Applications"
 brew cask install --appdir=$app_dir ${apps[@]}
 
 # INSTALL MAC APP STORE APPS
+echo ""
 echo_ok "Installing Applications from Mac App Store"
 mas signin --dialog $apple_id_email
 mas install ${appstore[@]}
 
 # CONFIGURE DNSMASQ
+echo ""
+echo_ok "Configuring dnsmasq"
 echo 'address=/.dev/127.0.0.1' > /usr/local/etc/dnsmasq.conf
 sudo brew services start dnsmasq
 sudo mkdir -v /etc/resolver
@@ -221,9 +236,27 @@ sudo touch /etc/resolver/dev
 sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/dev'
 
 # CREATE PROJECT DIRECTORIES
+echo ""
 echo_ok "Creating Project Directory"
-sudo mkdir $project_directory
-if [ "$project_symlink" = true ] ;
+sudo mkdir $PROJECT_DIRECTORY
+if [ "$PROJECT_SYMLINK" = true ] ;
+then
+	echo ""
 	echo_ok "Linking Project Directory"
-	ln -s $project_symlink_dir $project_directory
+	ln -s $PROJECT_SYMLINK_DIR $PROJECT_DIRECTORY
 fi
+
+# INSTALL OH MY ZSH
+echo ""
+echo_ok "Installing Oh My Zsh"
+curl -L https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh | sh
+echo ""
+echo_ok "Downloading .zshrc from $SFTP_HOST"
+sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$RESOURCE_ADDRESS/zsh/.zshrc /Users/$USERNAME
+echo ""
+echo_ok "Downloading env.sh from $SFTP_HOST"
+mkdir /Users/$USERNAME/zsh
+sshpass -p $SFTP_PASSWORD sftp -o StrictHostKeyChecking=no -oPort=$SFTP_PORT $SFTP_USER@$SFTP_HOST:$RESOURCE_ADDRESS/zsh/zsh/env.sh /Users/$USERNAME/zsh/env.sh
+echo ""
+echo_ok "Changing default shell to zsh"
+sudo chsh -s /usr/local/bin/zsh

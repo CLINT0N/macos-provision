@@ -42,4 +42,18 @@ Installs Applications from Mac App Store using mas-cli, these apps are defined i
 
 Configures dnsmasq for local .dev domains.
 
-To be continued..
+Creates Project Directory, creates symbolic link to external volume if defined.
+
+Installs Oh My Zsh
+
+Grabs zsh config files from web server:
+```
+- provision
+-- MACHINENAME
+--- zsh
+---- .zshrc
+---- zsh
+----- env.sh
+```
+
+```settings.sh``` sets various QoL settings and clears dock
