@@ -13,7 +13,8 @@ brew tap caskroom/fonts
 brew tap hudochenkov/sshpass
 
 binaries=(
-	bash
+	zsh
+	zsh-completions
 	sshpass
 	git
 	python
@@ -185,23 +186,18 @@ then
 	echo_ok "Fetching PHP Configurations from $sftp_host"
 	# PHP 55
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/55/php.ini $php55_dir
-	mkdir $php55_dir/conf.d
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/55/conf.d/ext-xdebug.ini $php55_dir/conf.d
 	# PHP 56
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/56/php.ini $php56_dir
-	mkdir $php56_dir/conf.d
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/56/conf.d/ext-xdebug.ini $php56_dir/conf.d
 	# PHP 70
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/70/php.ini $php70_dir
-	mkdir $php70_dir/conf.d
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/70/conf.d/ext-xdebug.ini $php70_dir/conf.d
 	# PHP 71
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/71/php.ini $php71_dir
-	mkdir $php71_dir/conf.d
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/71/conf.d/ext-xdebug.ini $php71_dir/conf.d
 	# PHP 72
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/72/php.ini $php72_dir
-	mkdir $php72_dir/conf.d
 	sshpass -p $sftp_password sftp -o StrictHostKeyChecking=no -oPort=$sftp_port $sftp_user@$sftp_host:$php_config/72/conf.d/ext-xdebug.ini $php72_dir/conf.d
 	# RESTART APACHE
 	apachectl -k restart
@@ -225,4 +221,9 @@ sudo touch /etc/resolver/dev
 sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/dev'
 
 # CREATE PROJECT DIRECTORIES
+echo_ok "Creating Project Directory"
 sudo mkdir $project_directory
+if [ "$project_symlink" = true ] ;
+	echo_ok "Linking Project Directory"
+	ln -s $project_symlink_dir $project_directory
+fi
